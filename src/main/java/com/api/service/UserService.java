@@ -2,13 +2,19 @@ package com.api.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.api.dto.AuthResponseDto;
 import com.api.dto.LoginRequestDto;
 import com.api.dto.RegisterRequestDto;
 import com.api.model.DBUser;
@@ -22,27 +28,40 @@ public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
+    private JWTService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JWTService jwtService,
+            AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
-    public ResponseEntity<?> getUser(final LoginRequestDto loginRequestDto) {
-        DBUser user = userRepository.findByEmail(loginRequestDto.getEmail());
-        if (user != null) {
-            log.warn("connexion réussie !");
-            return ResponseEntity.ok("Login successful");
-        } else {
-            log.warn("Pas d'utilisateur reconnu");
-            return ResponseEntity.badRequest().body("No User");
+    public ResponseEntity<?> login(final LoginRequestDto loginRequestDto) {
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequestDto.getEmail(),
+                            loginRequestDto.getPassword()));
+            String token = jwtService.generateToken(authentication);
+
+            return ResponseEntity.ok(new AuthResponseDto(token));
+        } catch (AuthenticationException error) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(error.getMessage());
         }
     }
 
-    public void register(RegisterRequestDto registerRequestDto) {
+    public ResponseEntity<?> register(RegisterRequestDto registerRequestDto) {
         DBUser user = userRepository.findByEmail(registerRequestDto.getEmail());
         if (user != null) {
-            log.warn("L'utilisateur existe déjà avec ce mail");
+
+            log.warn("User already exists");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+
         } else {
             String passwordEncoded = passwordEncoder.encode(registerRequestDto.getPassword());
             user = new DBUser();
@@ -52,6 +71,8 @@ public class UserService implements UserDetailsService {
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
             userRepository.save(user);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(null);
         }
     }
 
