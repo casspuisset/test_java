@@ -1,25 +1,24 @@
-// package com.api.controllers;
+package com.api.controllers;
 
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.http.ResponseEntity;
-// import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.RestController;
+import java.util.Optional;
 
-// import com.api.dto.LoginRequestDto;
-// import com.api.service.UserService;
-// import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-// @RestController
-// public class UserController {
+import com.api.model.DBUser;
+import com.api.service.UserService;
 
-// @Autowired
-// private UserService userService;
+@RestController
+public class UserController {
 
-// @GetMapping("/user")
-// public ResponseEntity<?> getUser(@RequestBody LoginRequestDto
-// loginRequestDto) {
+    private UserService userService;
 
-// return userService.getUser(loginRequestDto);
+    public UserController(UserService userService) {
 
-// }
-// }
+    }
+
+    @GetMapping("/users/:id")
+    public Optional<DBUser> getUserById(final Long id) {
+        return userService.getUserById(id);
+    }
+}

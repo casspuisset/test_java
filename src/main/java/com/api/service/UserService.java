@@ -1,6 +1,7 @@
 package com.api.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
 import com.api.dto.AuthResponseDto;
@@ -39,30 +41,26 @@ public class UserService implements UserDetailsService {
         this.authenticationManager = authenticationManager;
     }
 
-    public ResponseEntity<?> login(final LoginRequestDto loginRequestDto) {
+    public AuthResponseDto login(final LoginRequestDto loginRequestDto) {
 
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequestDto.getEmail(),
-                            loginRequestDto.getPassword()));
-            String token = jwtService.generateToken(authentication);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequestDto.getEmail(),
+                        loginRequestDto.getPassword()));
+        String token = jwtService.generateToken(authentication);
 
-            return ResponseEntity.ok(new AuthResponseDto(token));
-        } catch (AuthenticationException error) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(error.getMessage());
-        }
+        return new AuthResponseDto(token);
+
     }
 
-    public ResponseEntity<?> register(RegisterRequestDto registerRequestDto) {
+    public AuthResponseDto register(RegisterRequestDto registerRequestDto) {
         DBUser user = userRepository.findByEmail(registerRequestDto.getEmail());
         if (user != null) {
 
             log.warn("User already exists");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return null;
 
         } else {
+            log.info("user not exist");
             String passwordEncoded = passwordEncoder.encode(registerRequestDto.getPassword());
             user = new DBUser();
             user.setEmail(registerRequestDto.getEmail());
@@ -71,8 +69,22 @@ public class UserService implements UserDetailsService {
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
             userRepository.save(user);
+            Authentication authentication = authenticateUser(registerRequestDto.getEmail(),
+                    registerRequestDto.getPassword());
+            String token = jwtService.generateToken(authentication);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(null);
+            return new AuthResponseDto("token");
+        }
+    }
+
+    private Authentication authenticateUser(String email, String password) {
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            return authentication;
+        } catch (JwtException ex) {
+            log.error("Unable to authenticate user. {}", ex.getMessage());
+            return null;
         }
     }
 
@@ -86,6 +98,32 @@ public class UserService implements UserDetailsService {
                     .build();
         } else {
             throw new UsernameNotFoundException("No user found with this email");
+        }
+    }
+
+    public Optional<DBUser> getUserById(Long id) {
+        Optional<DBUser> user = userRepository.findById(id);
+        return user;
+    }
+
+    public ResponseEntity<?> getUserDetails(Authentication authentication) {
+        try {
+
+            DBUser user = userRepository.findByEmail(authentication.getName());
+
+            if (user == null) {
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(null);
+            }
+
+            return ResponseEntity.ok(user);
+
+        } catch (Exception error) {
+
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(null);
         }
     }
 }

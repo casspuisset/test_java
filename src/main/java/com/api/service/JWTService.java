@@ -2,22 +2,31 @@ package com.api.service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+
+import javax.naming.AuthenticationException;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
-@Service
+import lombok.extern.slf4j.Slf4j;
 
+@Service
+@Slf4j
 public class JWTService {
 
     private JwtEncoder jwtEncoder;
+    private AuthenticationManager authenticationManager;
 
-    public JWTService(JwtEncoder jwtEncoder) {
-
+    public JWTService(JwtEncoder jwtEncoder, AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
         this.jwtEncoder = jwtEncoder;
 
     }
@@ -25,19 +34,22 @@ public class JWTService {
     public String generateToken(Authentication authentication) {
 
         Instant now = Instant.now();
+        Instant expiration = now.plus(1, ChronoUnit.HOURS);
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.DAYS))
                 .subject(authentication.getName())
+                .issuedAt(now)
+                .expiresAt(expiration)
                 .build();
 
-        JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters
-                .from(JwsHeader.with(MacAlgorithm.HS256).build(), claims);
+        JwsHeader header = JwsHeader.with(MacAlgorithm.HS256)
+                .type("JWT")
+                .build();
 
-        return this.jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
+        JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters.from(header,
+                claims);
 
+        return jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
     }
 
 }
