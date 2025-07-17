@@ -17,7 +17,7 @@ import lombok.Data;
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -32,7 +32,7 @@ public class Rental {
     @Column(name = "owner_id")
     private Long ownerId;
 
-    @Column(name = "createdAt_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")

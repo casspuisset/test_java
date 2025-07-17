@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -73,7 +72,7 @@ public class UserService implements UserDetailsService {
                     registerRequestDto.getPassword());
             String token = jwtService.generateToken(authentication);
 
-            return new AuthResponseDto("token");
+            return new AuthResponseDto(token);
         }
     }
 
@@ -83,7 +82,7 @@ public class UserService implements UserDetailsService {
                     .authenticate(new UsernamePasswordAuthenticationToken(email, password));
             return authentication;
         } catch (JwtException ex) {
-            log.error("Unable to authenticate user. {}", ex.getMessage());
+            log.error("Unable to authenticate user");
             return null;
         }
     }

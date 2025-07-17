@@ -25,7 +25,7 @@ public class DBUser {
 
     private String password;
 
-    @Column(name = "createdAt_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.dto.AuthResponseDto;
 import com.api.dto.LoginRequestDto;
 import com.api.dto.RegisterRequestDto;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,14 +25,14 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> loginUser(@RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequestDto loginRequestDto) {
         var authResponseDto = userService.login(loginRequestDto);
 
         return ResponseEntity.ok().body(authResponseDto);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponseDto> registerUser(@RequestBody RegisterRequestDto user) {
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequestDto user) {
 
         var authResponseDto = userService.register(user);
         return ResponseEntity.ok().body(authResponseDto);

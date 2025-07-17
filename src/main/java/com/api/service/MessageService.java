@@ -1,41 +1,45 @@
 package com.api.service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.api.dto.MessageRequestDto;
+import com.api.dto.MessageResponseDto;
 import com.api.model.Message;
 import com.api.repository.MessageRepository;
 
-import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
-@Data
 @Service
+@Slf4j
 public class MessageService {
 
     private MessageRepository messageRepository;
 
     public MessageService(MessageRepository messagesRepository) {
+        this.messageRepository = messagesRepository;
     }
 
-    public Optional<Message> getMessage(final Long id) {
-        return messageRepository.findById(id);
-    }
+    public MessageResponseDto postMessage(MessageRequestDto messageRequest) {
 
-    public Iterable<Message> getMessages() {
-        return messageRepository.findAll();
-    }
-
-    public Message postMessage(MessageRequestDto message) {
         Message newMessage = new Message();
+        MessageResponseDto toReturnMessage = new MessageResponseDto();
+        // en attente du service de login
+        Long userId = (long) 1;
 
-        newMessage.setUserId(message.getUser_id());
-        newMessage.setRentalId(message.getRental_id());
-        newMessage.setMessage(message.getMessage());
+        var rentalId = messageRequest.getRental_id();
+        var message = messageRequest.getMessage();
+
+        newMessage.setUserId(userId);
+        newMessage.setRentalId(rentalId);
+        newMessage.setMessage(message);
+        toReturnMessage.setMessage(message);
         newMessage.setCreatedAt(LocalDateTime.now());
         newMessage.setUpdatedAt(LocalDateTime.now());
-        return messageRepository.save(newMessage);
+
+        messageRepository.save(newMessage);
+
+        return toReturnMessage;
     }
 }

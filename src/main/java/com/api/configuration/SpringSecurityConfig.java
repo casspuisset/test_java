@@ -33,14 +33,27 @@ public class SpringSecurityConfig {
     @org.springframework.beans.factory.annotation.Value("${security.jwt.key}")
     private String jwtKey;
 
+    // @Bean
+    // public SecurityFilterChain filterChain(HttpSecurity http)
+    // throws Exception {
+    // return http
+    // .csrf(csrf -> csrf.disable())
+    // .sessionManagement(session ->
+    // session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    // .authorizeHttpRequests(auth -> auth.requestMatchers("api/auth/register",
+    // "api/auth/login").permitAll()
+    // .anyRequest().authenticated())
+    // .httpBasic(Customizer.withDefaults())
+    // .build();
+    // }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http)
             throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("api/auth/register", "api/auth/login").permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }

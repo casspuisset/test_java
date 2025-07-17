@@ -1,20 +1,13 @@
 package com.api.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
+@Data
 public class MessageRequestDto {
-    private Long rental_id;
+
+    private String message;
 
     private Long user_id;
 
-    private String message;
+    private Long rental_id;
 }
