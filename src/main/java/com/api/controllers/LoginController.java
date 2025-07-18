@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.dto.LoginRequestDto;
 import com.api.dto.RegisterRequestDto;
+import com.api.dto.UserDetailsDto;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -40,7 +42,8 @@ public class LoginController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getUserDetails(@RequestParam Authentication authentication) {
-        return userService.getUserDetails(authentication);
+    public ResponseEntity<UserDetailsDto> getUserDetails(@RequestParam Authentication authentication) {
+        var response = userService.getUserDetails(authentication);
+        return ResponseEntity.ok().body(response);
     }
 }

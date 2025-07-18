@@ -8,4 +8,6 @@ import com.api.model.DBUser;
 @Repository
 public interface UserRepository extends JpaRepository<DBUser, Long> {
     public DBUser findByEmail(String email);
+
+    public DBUser findByIntId(Integer id);
 }

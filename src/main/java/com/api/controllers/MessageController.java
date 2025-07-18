@@ -1,6 +1,5 @@
 package com.api.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,16 +10,33 @@ import com.api.dto.MessageRequestDto;
 import com.api.dto.MessageResponseDto;
 import com.api.service.MessageService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
 @RequestMapping("/api")
+@Tag(name = "Messages")
 public class MessageController {
 
-    @Autowired
     private MessageService messageService;
 
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
+    }
+
+    @Operation(description = "Send a message to an owner's rental", responses = {
+            @ApiResponse(description = "Successfully sent the message", responseCode = "200", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"message\":\"Message send with success\"}")) }),
+            @ApiResponse(description = "Bad payload", responseCode = "400"),
+            @ApiResponse(description = "Unauthorized", responseCode = "401"),
+    }, security = { @SecurityRequirement(name = "bearerAuth") })
     @PostMapping("/messages/")
     public ResponseEntity<MessageResponseDto> postMessage(@RequestBody MessageRequestDto message) {
         var messageResponseDto = messageService.postMessage(message);

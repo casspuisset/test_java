@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.api.dto.AuthResponseDto;
 import com.api.dto.LoginRequestDto;
 import com.api.dto.RegisterRequestDto;
+import com.api.dto.UserDetailsDto;
 import com.api.model.DBUser;
 import com.api.repository.UserRepository;
 
@@ -105,24 +106,19 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public ResponseEntity<?> getUserDetails(Authentication authentication) {
-        try {
-
-            DBUser user = userRepository.findByEmail(authentication.getName());
-
-            if (user == null) {
-                return ResponseEntity
-                        .status(HttpStatus.UNAUTHORIZED)
-                        .body(null);
-            }
-
-            return ResponseEntity.ok(user);
-
-        } catch (Exception error) {
-
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body(null);
+    public UserDetailsDto getUserDetails(Authentication authentication) {
+        var id = 1;
+        DBUser user = userRepository.findByIntId(id);
+        if (user != null) {
+            UserDetailsDto userDetailsDto = new UserDetailsDto();
+            userDetailsDto.setId(id);
+            userDetailsDto.setMail(user.getEmail());
+            userDetailsDto.setName(user.getName());
+            userDetailsDto.setCreated_at(user.getCreatedAt());
+            userDetailsDto.setUpdated_at(user.getUpdatedAt());
+            return userDetailsDto;
+        } else {
+            return null;
         }
     }
 }
