@@ -8,22 +8,24 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import lombok.Data;
 
-@Entity
-@Table(name = "users")
 @Data
-public class DBUser {
-
+@Entity
+@Table(name = "messages")
+public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    private String email;
+    @Column(name = "rental_id")
+    private Long rentalId;
 
-    private String name;
+    @Column(name = "user_id")
+    private Long userId;
 
-    private String password;
+    private String message;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
