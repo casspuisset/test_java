@@ -108,7 +108,7 @@ public class UserService implements UserDetailsService {
 
     public UserDetailsDto getUserDetails(Authentication authentication) {
         var id = 1;
-        DBUser user = userRepository.findByIntId(id);
+        DBUser user = userRepository.findById(id);
         if (user != null) {
             UserDetailsDto userDetailsDto = new UserDetailsDto();
             userDetailsDto.setId(id);

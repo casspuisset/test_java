@@ -17,10 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RentalService {
 
-    private RentalRepository rentalsRepository;
+    private final RentalRepository rentalsRepository;
+    private final ImageService imageService;
 
-    public RentalService(RentalRepository rentalRepository) {
+    public RentalService(RentalRepository rentalRepository, ImageService imageService) {
         this.rentalsRepository = rentalRepository;
+        this.imageService = imageService;
     }
 
     public Rental getRental(final Integer id) {
@@ -36,11 +38,12 @@ public class RentalService {
         Rental newRental = new Rental();
         // en attente du service de login
         Long userId = (long) 1;
+        String picture = imageService.uploadImage(rental.getPicture());
 
         newRental.setName(rental.getName());
         newRental.setSurface(rental.getSurface());
         newRental.setPrice(rental.getPrice());
-        newRental.setPicture(rental.getPicture().getName());
+        newRental.setPicture(picture);
         newRental.setDescription(rental.getDescription());
         newRental.setOwnerId(userId);
         newRental.setCreatedAt(LocalDateTime.now());
