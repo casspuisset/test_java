@@ -37,6 +37,7 @@ public class RentalController {
     private RentalService rentalsService;
 
     public RentalController(RentalService rentalService) {
+        this.rentalsService = rentalService;
     }
 
     @Operation(description = "Get a rental by its ID", responses = {
