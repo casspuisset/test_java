@@ -16,17 +16,18 @@ import lombok.extern.slf4j.Slf4j;
 public class MessageService {
 
     private MessageRepository messageRepository;
+    private final AuthenticationService authenticationService;
 
-    public MessageService(MessageRepository messagesRepository) {
+    public MessageService(MessageRepository messagesRepository, AuthenticationService authenticationService) {
         this.messageRepository = messagesRepository;
+        this.authenticationService = authenticationService;
     }
 
     public MessageResponseDto postMessage(MessageRequestDto messageRequest) {
 
         Message newMessage = new Message();
         MessageResponseDto toReturnMessage = new MessageResponseDto();
-        // en attente du service de login
-        Long userId = (long) 1;
+        Integer userId = authenticationService.getAuthenticatedUser().getId();
 
         var rentalId = messageRequest.getRental_id();
         var message = messageRequest.getMessage();

@@ -16,11 +16,10 @@ public class CloudinaryConfiguration {
     private String cloudName = "dh1hq14tn";
 
     @Bean
-    public Cloudinary cloudinary(){
+    public Cloudinary cloudinary() {
         return new Cloudinary(ObjectUtils.asMap(
-            "cloud_name", cloudName,
-        "api_key", apiKey,
-        "api_secret", secret
-        ));
+                "cloud_name", cloudName,
+                "api_key", apiKey,
+                "api_secret", secret));
     }
 }

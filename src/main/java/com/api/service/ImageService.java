@@ -23,6 +23,7 @@ public class ImageService {
                     "use_filename", true,
                     "unique_filename", false,
                     "overwrite", true);
+            @SuppressWarnings("unchecked")
             Map<String, Object> uploadResult = cloudinary.uploader().upload(image.getBytes(), params1);
             return uploadResult.get("url").toString();
         } catch (Exception e) {

@@ -1,13 +1,15 @@
 package com.api.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.api.model.DBUser;
 
 @Repository
-public interface UserRepository extends JpaRepository<DBUser, Long> {
-    public DBUser findByEmail(String email);
+public interface UserRepository extends JpaRepository<DBUser, Integer> {
+    public Optional<DBUser> findByEmail(String email);
 
-    public DBUser findById(Integer id);
+    public Optional<DBUser> findById(Integer id);
 }

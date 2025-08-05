@@ -5,12 +5,20 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class UserDetailsDto {
+public class RentalDto {
     private Integer id;
 
     private String name;
 
-    private String email;
+    private Double surface;
+
+    private Double price;
+
+    private String picture;
+
+    private String description;
+
+    private Integer owner_id;
 
     private LocalDateTime created_at;
 

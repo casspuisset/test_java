@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.dto.AllRentalsDto;
+import com.api.dto.RentalDto;
 import com.api.dto.RentalRequestDto;
 import com.api.dto.RentalResponseDto;
 import com.api.dto.RentalUpdateRequestDto;
-import com.api.model.Rental;
 import com.api.service.RentalService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,66 +35,64 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Rentals")
 public class RentalController {
 
-    private RentalService rentalsService;
+        private RentalService rentalsService;
 
-    public RentalController(RentalService rentalService) {
-        this.rentalsService = rentalService;
-    }
-
-    @Operation(description = "Get a rental by its ID", responses = {
-            @ApiResponse(description = "Get the rental", responseCode = "200", content = {
-                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ApiResponse.class)), examples = @ExampleObject(value = "rentals:{\"id\":1,\"name\":\"test house 1\",\"surface\":432,\"price\":300,\"picture\":\"\"https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg\"\",\"description\":\"brief description\",\"owner_id\":1,\"created_at\":\"2012/12/02\",\"updated_at\":\"2012/12/02\"}"))
-            }),
-            @ApiResponse(description = "Unauthorized", responseCode = "401"),
-    }, security = { @SecurityRequirement(name = "bearerAuth") })
-    @GetMapping("/{id}")
-    public ResponseEntity<Rental> getRental(@PathVariable final Integer id) {
-        try {
-            Rental rental = rentalsService.getRental(id);
-            return ResponseEntity.ok().body(rental);
-        } catch (Exception e) {
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        public RentalController(RentalService rentalService) {
+                this.rentalsService = rentalService;
         }
-    }
 
-    @Operation(description = "Get all rentals", responses = {
-            @ApiResponse(description = "Get all rentals", responseCode = "200", content = {
-                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ApiResponse.class)), examples = @ExampleObject(value = "rentals:[{\"id\":1,\"name\":\"test house 1\",\"surface\":432,\"price\":300,\"picture\":\"\"https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg\"\",\"description\":\"brief description\",\"owner_id\":1,\"created_at\":\"2012/12/02\",\"updated_at\":\"2012/12/02\"}, {\"id\":1,\"name\":\"test house 2\",\"surface\":124,\"price\":200,\"picture\":\"\"https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg\"\",\"description\":\"anther brief description\",\"owner_id\":2,\"created_at\":\"2014/12/02\",\"updated_at\":\"2014/12/02\"}]"))
-            }),
-            @ApiResponse(description = "Unauthorized", responseCode = "401"),
-    }, security = { @SecurityRequirement(name = "bearerAuth") })
-    @GetMapping("")
-    public ResponseEntity<List<Rental>> getAllRentals() {
-        var rentalsResponseDto = rentalsService.getAllRentals();
-        return ResponseEntity.ok().body(rentalsResponseDto);
-    }
+        @Operation(description = "Get a rental by its ID", responses = {
+                        @ApiResponse(description = "Get the rental", responseCode = "200", content = {
+                                        @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ApiResponse.class)), examples = @ExampleObject(value = "{\"id\":1,\"name\":\"dream house\",\"surface\":24,\"price\":30,\"picture\":\"https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg\",\"description\":\"brief description\",\"owner_id\":1,\"created_at\":\"2012/12/02\",\"updated_at\":\"2012/12/02\"}"))
+                        }),
+                        @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+        }, security = { @SecurityRequirement(name = "bearerAuth") })
+        @GetMapping("/{id}")
+        public ResponseEntity<RentalDto> getRental(@PathVariable final Integer id) {
+                try {
+                        RentalDto rental = rentalsService.getRental(id);
+                        return ResponseEntity.ok().body(rental);
+                } catch (Exception e) {
+                        System.out.println(e);
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                }
+        }
 
-    @Operation(description = "Create a new rental", responses = {
-            @ApiResponse(description = "Rental created", responseCode = "200", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"message\":\"Rental created !\"}")) }),
-            @ApiResponse(description = "Unauthorized", responseCode = "401"),
-    }, security = { @SecurityRequirement(name = "bearerAuth") })
-    @PostMapping(path = "/**", consumes = "multipart/form-data")
-    public ResponseEntity<RentalResponseDto> createRentals(@ModelAttribute RentalRequestDto rentalRequestDto) {
-        // en attendant
+        @Operation(description = "Get all rentals", responses = {
+                        @ApiResponse(description = "Get all rentals", responseCode = "200", content = {
+                                        @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ApiResponse.class)), examples = @ExampleObject(value = "{rentals: [{\"id\":1,\"name\":\"test house 1\",\"surface\":432,\"price\":300,\"picture\":\"https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg\",\"description\":\"brief description\",\"owner_id\":1,\"created_at\":\"2012/12/02\",\"updated_at\":\"2012/12/02\"}, {\"id\":1,\"name\":\"test house 2\",\"surface\":124,\"price\":200,\"picture\":\"https://blog.technavio.org/wp-content/uploads/2018/12/Online-House-Rental-Sites.jpg\",\"description\":\"another brief description\",\"owner_id\":2,\"created_at\":\"2014/12/02\",\"updated_at\":\"2014/12/02\"}]}"))
+                        }),
+                        @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+        }, security = { @SecurityRequirement(name = "bearerAuth") })
+        @GetMapping("")
+        public ResponseEntity<AllRentalsDto> getAllRentals() {
+                AllRentalsDto rentalsResponseDto = rentalsService.getAllRentals();
+                return ResponseEntity.ok().body(rentalsResponseDto);
+        }
 
-        RentalResponseDto rentalResponseDto = rentalsService.createRentals(rentalRequestDto);
-        return ResponseEntity.ok().body(rentalResponseDto);
-    }
+        @Operation(description = "Create a new rental", responses = {
+                        @ApiResponse(description = "Rental created", responseCode = "200", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"message\":\"Rental created !\"}")) }),
+                        @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+        }, security = { @SecurityRequirement(name = "bearerAuth") })
+        @PostMapping(path = "/**", consumes = "multipart/form-data")
+        public ResponseEntity<RentalResponseDto> createRentals(@ModelAttribute RentalRequestDto rentalRequestDto) {
+                RentalResponseDto rentalResponseDto = rentalsService.createRentals(rentalRequestDto);
+                return ResponseEntity.ok().body(rentalResponseDto);
+        }
 
-    @Operation(description = "Update an already existing rental", responses = {
-            @ApiResponse(description = "Rental updated", responseCode = "200", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"message\":\"Rental updated !\"}")) }),
-            @ApiResponse(description = "Unauthorized", responseCode = "401"),
-    }, security = { @SecurityRequirement(name = "bearerAuth") })
-    @PutMapping(path = "/{id}", consumes = "multipart/form-data")
-    public ResponseEntity<RentalResponseDto> updateRentals(@PathVariable String id,
-            @ModelAttribute RentalRequestDto rentalRequestDto) {
+        @Operation(description = "Update an already existing rental", responses = {
+                        @ApiResponse(description = "Rental updated", responseCode = "200", content = {
+                                        @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"message\":\"Rental updated !\"}")) }),
+                        @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+        }, security = { @SecurityRequirement(name = "bearerAuth") })
+        @PutMapping(path = "/{id}", consumes = "multipart/form-data")
+        public ResponseEntity<RentalResponseDto> updateRentals(@PathVariable String id,
+                        @ModelAttribute RentalRequestDto rentalRequestDto) {
 
-        RentalUpdateRequestDto newRequestDto = rentalsService.createUpdateDto(rentalRequestDto, id);
-        RentalResponseDto rentalResponseDto = rentalsService.updateRentals(newRequestDto);
-        return ResponseEntity.ok().body(rentalResponseDto);
-    }
+                RentalUpdateRequestDto newRequestDto = rentalsService.createUpdateDto(rentalRequestDto, id);
+                RentalResponseDto rentalResponseDto = rentalsService.updateRentals(newRequestDto);
+                return ResponseEntity.ok().body(rentalResponseDto);
+        }
 
 }

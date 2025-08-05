@@ -1,15 +1,31 @@
-// package com.api.configuration;
+package com.api.configuration;
 
-// import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-// import io.swagger.v3.oas.annotations.info.Contact;
-// import io.swagger.v3.oas.annotations.info.Info;
-// import io.swagger.v3.oas.annotations.info.License;
-// import io.swagger.v3.oas.annotations.servers.Server;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-// @OpenAPIDefinition(info = @Info(contact = @Contact(name = "Cassandre
-// PUISSET"), description = "OpenApi Swagger Documentation for the Châtop
-// back-end server", title = "Swagger doc for Châtop", version = "1.0", license
-// = @License(name = "MIT License")), servers = {
-// @Server(description = "Local ENV", url = "http://localhost:3001/") })
-// public class SwaggerConfig {
-// }
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+
+@Configuration
+public class SwaggerConfig {
+    @Bean
+    public OpenAPI rentalPortalOpenAPI() {
+
+        Info info = new Info()
+                .title("Rental Portal API")
+                .version("1.0")
+                .description(
+                        "Documentation for Rental Portal API to manage rentals properties and users in Chatop company");
+
+        Components components = new Components()
+                .addSecuritySchemes("bearer-key",
+                        new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT"));
+
+        return new OpenAPI().info(info).components(components);
+    }
+}

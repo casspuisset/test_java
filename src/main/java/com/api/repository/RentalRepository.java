@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.api.model.Rental;
 
 @Repository
-public interface RentalRepository extends JpaRepository<Rental, Integer> {
+public interface RentalRepository extends JpaRepository<Rental, Long> {
     public Optional<Rental> findById(Integer id);
 }
