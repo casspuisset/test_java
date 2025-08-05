@@ -1,10 +1,12 @@
 package com.api.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.api.dto.AllRentalsDto;
+import com.api.dto.RentalDto;
 import com.api.dto.RentalRequestDto;
 import com.api.dto.RentalResponseDto;
 import com.api.dto.RentalUpdateRequestDto;
@@ -19,25 +21,46 @@ public class RentalService {
 
     private final RentalRepository rentalsRepository;
     private final ImageService imageService;
+    private final AuthenticationService authenticationService;
 
-    public RentalService(RentalRepository rentalRepository, ImageService imageService) {
+    public RentalService(RentalRepository rentalRepository, ImageService imageService,
+            AuthenticationService authenticationService) {
         this.rentalsRepository = rentalRepository;
         this.imageService = imageService;
+        this.authenticationService = authenticationService;
     }
 
-    public Rental getRental(final Integer id) {
+    public RentalDto getRental(final Integer id) {
         var rental = rentalsRepository.findById(id);
-        return rental.get();
+        var response = rentalToDto(rental.get());
+        return response;
     }
 
-    public List<Rental> getAllRentals() {
-        return rentalsRepository.findAll();
+    public AllRentalsDto getAllRentals() {
+        var rentals = new AllRentalsDto();
+        var listRentals = rentalsRepository.findAll();
+        var listRentalDto = listRentals.stream().map(this::rentalToDto).toList();
+        rentals.setRentals(listRentalDto);
+        return rentals;
+    }
+
+    private RentalDto rentalToDto(Rental rental) {
+        RentalDto rentalDto = new RentalDto();
+        rentalDto.setId(rental.getId());
+        rentalDto.setName(rental.getName());
+        rentalDto.setDescription(rental.getDescription());
+        rentalDto.setOwner_id(rental.getOwnerId());
+        rentalDto.setCreated_at(rental.getCreatedAt());
+        rentalDto.setUpdated_at(rental.getUpdatedAt());
+        rentalDto.setPicture(rental.getPicture());
+        rentalDto.setPrice(rental.getPrice());
+        rentalDto.setSurface(rental.getSurface());
+        return rentalDto;
     }
 
     public RentalResponseDto createRentals(RentalRequestDto rental) {
         Rental newRental = new Rental();
-        // en attente du service de login
-        Long userId = (long) 1;
+        Integer id = authenticationService.getAuthenticatedUser().getId();
         String picture = imageService.uploadImage(rental.getPicture());
 
         newRental.setName(rental.getName());
@@ -45,7 +68,7 @@ public class RentalService {
         newRental.setPrice(rental.getPrice());
         newRental.setPicture(picture);
         newRental.setDescription(rental.getDescription());
-        newRental.setOwnerId(userId);
+        newRental.setOwnerId(id);
         newRental.setCreatedAt(LocalDateTime.now());
         newRental.setUpdatedAt(LocalDateTime.now());
 
@@ -57,22 +80,23 @@ public class RentalService {
     }
 
     public RentalResponseDto updateRentals(RentalUpdateRequestDto rental) {
-        var searchedRental = rentalsRepository.findById(rental.getId());
+        Optional<Rental> searchedRental = rentalsRepository.findById(rental.getId());
         if (searchedRental != null) {
-            var newRental = searchedRental.get();
-            // en attente du service de login
-            Long userId = (long) 1;
+            Rental newRental = searchedRental.get();
+            Integer id = authenticationService.getAuthenticatedUser().getId();
 
             newRental.setName(rental.getName());
             newRental.setSurface(rental.getSurface());
             newRental.setPrice(rental.getPrice());
             if (rental.getPicture() != null) {
-                newRental.setPicture(rental.getPicture().getName());
+                String picture = imageService.uploadImage(rental.getPicture());
+
+                newRental.setPicture(picture);
             } else {
                 newRental.setPicture(newRental.getPicture());
             }
             newRental.setDescription(rental.getDescription());
-            newRental.setOwnerId(userId);
+            newRental.setOwnerId(id);
             newRental.setCreatedAt(newRental.getCreatedAt());
             newRental.setUpdatedAt(LocalDateTime.now());
 

@@ -17,13 +17,13 @@ import lombok.Data;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "rental_id")
-    private Long rentalId;
+    private Integer rentalId;
 
     @Column(name = "user_id")
-    private Long userId;
+    private Integer userId;
 
     private String message;
 
