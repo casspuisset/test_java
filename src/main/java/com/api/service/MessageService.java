@@ -23,6 +23,7 @@ public class MessageService {
         this.authenticationService = authenticationService;
     }
 
+    // create a new message
     public MessageResponseDto postMessage(MessageRequestDto messageRequest) {
 
         Message newMessage = new Message();

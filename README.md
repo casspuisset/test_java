@@ -2,15 +2,15 @@
 
 ## Language
 
-This application use Java 17 with Spring Boot (v. 3.5.3), and the database is in mySql
+This application uses Java 17 with Spring Boot (v. 3.5.3). The database is in mySql.
 
 ## Backend configuration
 
-Clone the repository file on your local IDE
+Clone the repository folder on your local IDE.
 
 ## Database configuration
 
-Script to initialize the database :
+Initialize the database with the following script :
 
 ```sql
 DROP DATABASE IF EXISTS `portaillocataire`;
@@ -57,6 +57,38 @@ ALTER TABLE `MESSAGES` ADD FOREIGN KEY (`user_id`) REFERENCES `USERS` (`id`);
 
 ALTER TABLE `MESSAGES` ADD FOREIGN KEY (`rental_id`) REFERENCES `RENTALS` (`id`);
 ```
+
+## Cloudinary configuration
+
+To upload the rentals pictures, use cloudinary. You can create your free account here `https://cloudinary.com/` and find your API keys at `https://console.cloudinary.com/settings/api-keys` to configurate the `application.properties` file.
+
+## Add the application.properties file
+
+In src/main/ressources, create a new file `application.properties` with :
+
+```
+spring.application.name=api
+server.port= 3001
+
+spring.h2.console.enabled=true
+
+security.jwt.key=<YOUR SECURITY KEY TO ENCODE PASSWORDS>
+
+spring.datasource.url=jdbc:mysql://localhost:3306/portaillocataire
+spring.datasource.username= <YOUR DATABASE USERNAME>
+spring.datasource.password=<YOUR DATABASE PASSWORD>
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.enabled=true
+
+api.cloudinary.secret = <YOUR CLOUDINARY API SECRET>
+api.cloudinary.apiKey = <YOUR CLOUDINARY API KEY>
+api.cloudinary.cloudName = <YOUR CLOUDINARY CLOUD NAME>
+```
+
+The backend service requires this file with your own passwords and keys instead of the `<YOUR VARIABLE>` to work.
 
 ## Documentation
 

@@ -3,7 +3,6 @@ package com.api.service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
@@ -19,14 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 public class JWTService {
 
     private JwtEncoder jwtEncoder;
-    private AuthenticationManager authenticationManager;
 
-    public JWTService(JwtEncoder jwtEncoder, AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+    public JWTService(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
 
     }
 
+    // generate a JWT token for the session
     public String generateToken(Authentication authentication) {
 
         Instant now = Instant.now();

@@ -22,6 +22,7 @@ public class AuthenticationService {
         this.userRepository = userRepository;
     }
 
+    // get user from the context
     private Optional<DBUser> getAuthenticatedUserFromContext() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -44,6 +45,7 @@ public class AuthenticationService {
 
     }
 
+    // Map a User in a Dto
     private UserDetailsDto mapTo(DBUser dbUser) {
         var userDetailsDto = new UserDetailsDto();
         userDetailsDto.setName(dbUser.getName());
