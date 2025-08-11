@@ -8,12 +8,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +41,7 @@ public class LoginController {
         @Operation(description = "Log an already registered user", responses = {
                         @ApiResponse(description = "Login successfull and authentification token generated", responseCode = "200", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"token\":\"jwt\"}")) }),
-                        @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"message\":\"error\"}"))),
-        }, security = { @SecurityRequirement(name = "bearerAuth") })
+                        @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"message\":\"error\"}"))) })
         @PostMapping("/login")
         public ResponseEntity<?> loginUser(@RequestBody LoginRequestDto loginRequestDto) {
                 log.info(loginRequestDto.toString());
@@ -57,7 +54,7 @@ public class LoginController {
                         @ApiResponse(description = "Token generated", responseCode = "200", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"token\":\"jwt\"}")) }),
                         @ApiResponse(description = "User created", responseCode = "201", content = @Content)
-        }, security = { @SecurityRequirement(name = "bearerAuth") })
+        })
         @PostMapping("/register")
         public ResponseEntity<?> registerUser(@RequestBody RegisterRequestDto user) {
 
@@ -70,8 +67,7 @@ public class LoginController {
                         @ApiResponse(description = "Successfully retrieved the informations of the user", responseCode = "200", content = {
                                         @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"id\":1,\"name\":\"Test TEST\",\"email\":\"test@test.com\",\"created_at\":\"2022/02/02\",\"updated_at\":\"2022/08/02\"}")) }),
                         @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content)
-        }, security = { @SecurityRequirement(name = "bearerAuth") })
-
+        })
         @GetMapping("/me")
         public ResponseEntity<UserDetailsDto> getUserDetails() {
                 var response = authenticationService.getAuthenticatedUser();

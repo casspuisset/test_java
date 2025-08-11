@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +35,7 @@ public class MessageController {
             @ApiResponse(description = "Successfully sent the message", responseCode = "200", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{\"message\":\"Message send with success\"}")) }),
             @ApiResponse(description = "Bad payload", responseCode = "400", content = @Content),
-            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{}"))),
-    }, security = { @SecurityRequirement(name = "bearerAuth") })
+            @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class), examples = @ExampleObject(value = "{}"))) })
     @PostMapping("/messages")
     public ResponseEntity<MessageResponseDto> postMessage(@Valid @RequestBody MessageRequestDto message) {
         var messageResponseDto = messageService.postMessage(message);
