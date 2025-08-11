@@ -17,6 +17,7 @@ public class ImageService {
         this.cloudinary = cloudinary;
     }
 
+    // upload image and retrieve the new url to use it
     public String uploadImage(MultipartFile image) {
         try {
             Map params1 = ObjectUtils.asMap(

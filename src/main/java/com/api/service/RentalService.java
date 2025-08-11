@@ -30,12 +30,14 @@ public class RentalService {
         this.authenticationService = authenticationService;
     }
 
+    // get a rental by their id
     public RentalDto getRental(final Integer id) {
         var rental = rentalsRepository.findById(id);
         var response = rentalToDto(rental.get());
         return response;
     }
 
+    // get all rentals
     public AllRentalsDto getAllRentals() {
         var rentals = new AllRentalsDto();
         var listRentals = rentalsRepository.findAll();
@@ -44,6 +46,7 @@ public class RentalService {
         return rentals;
     }
 
+    // map a rental in a Dto
     private RentalDto rentalToDto(Rental rental) {
         RentalDto rentalDto = new RentalDto();
         rentalDto.setId(rental.getId());
@@ -58,6 +61,7 @@ public class RentalService {
         return rentalDto;
     }
 
+    // create a new rental
     public RentalResponseDto createRentals(RentalRequestDto rental) {
         Rental newRental = new Rental();
         Integer id = authenticationService.getAuthenticatedUser().getId();
@@ -79,6 +83,7 @@ public class RentalService {
         return rentalResponseDto;
     }
 
+    // edit an existing rental
     public RentalResponseDto updateRentals(RentalUpdateRequestDto rental) {
         Optional<Rental> searchedRental = rentalsRepository.findById(rental.getId());
         if (searchedRental != null) {
@@ -110,6 +115,7 @@ public class RentalService {
         }
     }
 
+    // map a Rental in a Dto for updating
     public RentalUpdateRequestDto createUpdateDto(RentalRequestDto rentalRequestDto, String id) {
         var newRequest = new RentalUpdateRequestDto();
         newRequest.setDescription(rentalRequestDto.getDescription());

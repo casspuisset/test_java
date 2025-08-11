@@ -39,6 +39,7 @@ public class UserService {
         this.authenticationService = authenticationService;
     }
 
+    // log an user if the email and the password are correct
     public AuthResponseDto login(final LoginRequestDto loginRequestDto) {
         try {
             Authentication authentication = authenticateUser(loginRequestDto.getEmail(),
@@ -53,6 +54,7 @@ public class UserService {
 
     }
 
+    // create a new user in the database
     public AuthResponseDto register(RegisterRequestDto registerRequestDto) {
         Optional<DBUser> optionnalUser = userRepository.findByEmail(registerRequestDto.getEmail());
         if (optionnalUser.isPresent()) {
@@ -77,6 +79,7 @@ public class UserService {
         }
     }
 
+    // authenticate the user
     private Authentication authenticateUser(String email, String password) {
         try {
             Authentication authentication = authenticationManager
@@ -88,6 +91,7 @@ public class UserService {
         }
     }
 
+    // retrieve an user by their id
     public UserDetailsDto getUserById(Integer id) {
         Optional<DBUser> user = userRepository.findById(id);
         if (user != null) {
@@ -103,6 +107,7 @@ public class UserService {
         }
     }
 
+    // retrieve user's informations from the database
     public UserDetailsDto getUserDetails() {
 
         Integer id = authenticationService.getAuthenticatedUser().getId();

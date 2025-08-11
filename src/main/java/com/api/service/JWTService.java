@@ -24,6 +24,7 @@ public class JWTService {
 
     }
 
+    // generate a JWT token for the session
     public String generateToken(Authentication authentication) {
 
         Instant now = Instant.now();
